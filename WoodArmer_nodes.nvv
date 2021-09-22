@@ -1,0 +1,23 @@
+# script for NextFEM Designer - v.1.4 and above
+# Wood-Armer method for slab design
+
+# for Bottom reinforcement - positive moment
+mxxBd=max(0,mxx+abs(mxy))
+myyBd=max(0,myy+abs(mxy))
+@BotMx
+mxxBd=if(myyBd==0,max(0,mxx+abs(mxy^2/myy)),mxxBd)
+@BotMy
+myyBd=if(mxxBd==0,max(0,myy+abs(mxy^2/mxx)),myyBd)
+
+# for Top reinforcement - negative moment
+mxxTd=min(0,mxx-abs(mxy))
+myyTd=min(0,myy-abs(mxy))
+@TopMx
+mxxTd=if(myyTd==0,min(0,mxx-abs(mxy^2/myy)),mxxTd)
+@TopMy
+myyTd=if(mxxTd==0,min(0,myy-abs(mxy^2/mxx)),myyTd)
+
+@Contour
+1
+
+

@@ -1,0 +1,31 @@
+# script for NextFEM Designer - v.1.4 and above
+# Wood-Armer method for slab design
+
+# for Bottom reinforcement - positive moment
+mmxxBd=max(0,mmxx+abs(mmxy))
+mmyyBd=max(0,mmyy+abs(mmxy))
+@Botmmx
+mmxxBd=if(mmyyBd==0,max(0,mmxx+abs(mmxy^2/mmyy)),mmxxBd)
+@Botmmy
+mmyyBd=if(mmxxBd==0,max(0,mmyy+abs(mmxy^2/mmxx)),mmyyBd)
+
+# for Top reinforcement - negative moment
+mmxxTd=min(0,mmxx-abs(mmxy))
+mmyyTd=min(0,mmyy-abs(mmxy))
+@Topmmx
+mmxxTd=if(mmyyTd==0,min(0,mmxx-abs(mmxy^2/mmyy)),mmxxTd)
+@Topmmy
+mmyyTd=if(mmxxTd==0,min(0,mmyy-abs(mmxy^2/mmxx)),mmyyTd)
+
+@Contour
+1
+
+# DATA -----------------------
+# design yield strength 391.3 MPa
+fyd=391.3
+# slab height [m]
+h=0.3
+# concrete cover [m]
+c=0.05
+# END DATA -------------------
+
