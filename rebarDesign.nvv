@@ -1,0 +1,111 @@
+# script for NextFEM Designer - v.1.4 and above
+# dimensioning of rebar in a beam part of a rigid diaphragm
+clearRebar
+# long. rebar strength fydl
+fydl=unitconv(MPa,model_S,391.3)
+# stirrup strength
+fyds=fydl
+# translate moment for current position (null translation) - major axis
+#TranslateMomentZZ(0,pos)
+
+# if beam go to block 1, if wall go to block 2
+execif(isWall==0,1.0)
+execif(isWall==1,2.0)
+
+$$1.0
+# design moment - take maximum and minimum over beam
+Mpos=MmaxZ
+Mneg=MminZ
+
+# set rebar cover to 40mm
+c=unitconv(mm,model_L,40)
+# calculate effective section height
+d=h-c
+
+# estimate rebar area for design moments
+AsTop=max(abs(Mpos)/(0.9*d*fydl),0.0013*b*d)
+AsBot=max(abs(Mneg)/(0.9*d*fydl),0.0013*b*d)
+
+# insert rebar in the model - find bar diameter for 3 bars at bottom and 3 at top
+nBars=3
+TopD=getBarDiam(AsTop/nBars)
+BotD=getBarDiam(AsBot/nBars)
+TopArea=pi*TopD^2/4
+TopArea=unitconv(mm^2,model_L^2,TopArea)
+BotArea=pi*BotD^2/4
+BotArea=unitconv(mm^2,model_L^2,BotArea)
+
+# stirrups D=8mm
+stirrArea=unitconv(mm^2,model_L^2,50)
+stirrSpac=unitconv(mm,model_L,150)
+
+# cycle for bars
+i=1
+xdim=(b-2*c)/(nBars-1)
+execwhile(i<=nBars,1.1)
+$!
+
+$$1.1
+    # design material ID for bars = 2
+    # X coord., Y coord., bar area, design material ID, Linit [0,1), Lend (0,1]
+    # top
+    res=addRebarL(c+xdim*(i-1),h-c,TopArea,2,0,1)
+    exitdo=if(res==-1,1,0)
+    # bottom
+    res=addRebarL(c+xdim*(i-1),c,BotArea,2,0,1)
+    exitdo=if(res==-1,1,0)
+    # shear reinforcements
+    # legs in Y, legs in Z, bar area, spacing, design material ID = 2, Linit [0,1), Lend (0,1]
+    res=addStirrups(2, 2, stirrArea, stirrSpac, 2, 0,1)
+    exitdo=if(res==-1,1,0)
+    i=i+1
+$!
+
+# wall
+$$2.0
+# design moment - take maximum and minimum over beam
+Mpos=MmaxZ
+Mneg=MminZ
+
+# set rebar cover to 40mm
+c=unitconv(mm,model_L,40)
+# calculate effective section height
+d=h-c
+
+# estimate rebar area for design moments
+As=max(max(abs(Mpos),abs(Mneg))/(0.9*d*fydl),0.003*A)
+
+# insert rebar in the model - lattice reiforcement 20x20cm D=8mm
+lt=unitconv(cm,model_L,20)
+nBars=ceil((h-2*c)/lt)+1
+# rebar diameter in mm
+bd=8
+RebArea=pi*bd^2/4
+RebArea=unitconv(mm^2,model_L^2,RebArea)
+
+# stirrups D=8mm
+stirrArea=RebArea
+stirrSpac=lt
+
+# cycle for bars
+i=1
+xdim=lt
+execwhile(i<=nBars,2.1)
+$!
+
+$$2.1
+    # design material ID for bars = 2
+    # X coord., Y coord., bar area, design material ID, Linit [0,1), Lend (0,1]
+    rpos=if(c+xdim*(i-1)>h,h-c,c+xdim*(i-1))
+    # left
+    res=addRebarL(c,rpos,RebArea,2,0,1)
+    exitdo=if(res==-1,1,0)
+    # right
+    res=addRebarL(b-c,rpos,RebArea,2,0,1)
+    exitdo=if(res==-1,1,0)
+    # shear reinforcements
+    # legs in Y, legs in Z, bar area, spacing, design material ID = 2, Linit [0,1), Lend (0,1]
+    res=addStirrups(2, 2, stirrArea, stirrSpac, 2, 0,1)
+    exitdo=if(res==-1,1,0)
+    i=i+1
+$!
