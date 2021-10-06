@@ -5,19 +5,17 @@
 mxxBd=max(0,mxx+abs(mxy))
 myyBd=max(0,myy+abs(mxy))
 @BotMx
-mxxBd=if(myyBd==0,max(0,mxx+abs(mxy^2/myy)),mxxBd)
+mxxBd=if(myyBd==0,max(0,mxx+abs(mxy^2/if(myy==0,1,myy))),mxxBd)
 @BotMy
-myyBd=if(mxxBd==0,max(0,myy+abs(mxy^2/mxx)),myyBd)
+myyBd=if(mxxBd==0,max(0,myy+abs(mxy^2/if(mxx==0,1,mxx))),myyBd)
 
 # for Top reinforcement - negative moment
 mxxTd=min(0,mxx-abs(mxy))
 myyTd=min(0,myy-abs(mxy))
 @TopMx
-mxxTd=if(myyTd==0,min(0,mxx-abs(mxy^2/myy)),mxxTd)
+mxxTd=if(myyTd==0,min(0,mxx-abs(mxy^2/if(myy==0,1,myy))),mxxTd)
 @TopMy
-myyTd=if(mxxTd==0,min(0,myy-abs(mxy^2/mxx)),myyTd)
+myyTd=if(mxxTd==0,min(0,myy-abs(mxy^2/if(mxx==0,1,mxx))),myyTd)
 
 @Contour
 1
-
-

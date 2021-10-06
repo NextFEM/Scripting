@@ -5,17 +5,17 @@
 mmxxBd=max(0,mmxx+abs(mmxy))
 mmyyBd=max(0,mmyy+abs(mmxy))
 @Botmmx
-mmxxBd=if(mmyyBd==0,max(0,mmxx+abs(mmxy^2/mmyy)),mmxxBd)
+mmxxBd=if(mmyyBd==0,max(0,mmxx+abs(mmxy^2/if(mmyy==0,1,mmyy))),mmxxBd)
 @Botmmy
-mmyyBd=if(mmxxBd==0,max(0,mmyy+abs(mmxy^2/mmxx)),mmyyBd)
+mmyyBd=if(mmxxBd==0,max(0,mmyy+abs(mmxy^2/if(mmxx==0,1,mmxx))),mmyyBd)
 
 # for Top reinforcement - negative moment
 mmxxTd=min(0,mmxx-abs(mmxy))
 mmyyTd=min(0,mmyy-abs(mmxy))
 @Topmmx
-mmxxTd=if(mmyyTd==0,min(0,mmxx-abs(mmxy^2/mmyy)),mmxxTd)
+mmxxTd=if(mmyyTd==0,min(0,mmxx-abs(mmxy^2/if(mmyy==0,1,mmyy))),mmxxTd)
 @Topmmy
-mmyyTd=if(mmxxTd==0,min(0,mmyy-abs(mmxy^2/mmxx)),mmyyTd)
+mmyyTd=if(mmxxTd==0,min(0,mmyy-abs(mmxy^2/if(mmxx==0,1,mmxx))),mmyyTd)
 
 @Contour
 1
