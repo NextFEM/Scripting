@@ -1,4 +1,4 @@
-# script for NextFEM Designer - v.1.4 and above
+# script for NextFEM Designer - v.1.8.3 and above
 # dimensioning of rebar in a beam part of a rigid diaphragm
 clearRebar
 # long. rebar strength fydl
@@ -49,10 +49,10 @@ $$1.1
     # design material ID for bars = 2
     # X coord., Y coord., bar area, design material ID, Linit [0,1), Lend (0,1]
     # top
-    res=addRebarL(c+xdim*(i-1),h-c,TopArea,2,0,1)
+    res=addRebarL(-b/2+c+xdim*(i-1),h/2-c,TopArea,2,0,1)
     exitdo=if(res==-1,1,0)
     # bottom
-    res=addRebarL(c+xdim*(i-1),c,BotArea,2,0,1)
+    res=addRebarL(-b/2+c+xdim*(i-1),-h/2+c,BotArea,2,0,1)
     exitdo=if(res==-1,1,0)
     # shear reinforcements
     # legs in Y, legs in Z, bar area, spacing, design material ID = 2, Linit [0,1), Lend (0,1]
@@ -75,7 +75,7 @@ d=h-c
 # estimate rebar area for design moments
 As=max(max(abs(Mpos),abs(Mneg))/(0.9*d*fydl),0.003*A)
 
-# insert rebar in the model - lattice reiforcement 20x20cm D=8mm
+# insert rebar in the model - lattice reinforcement 20x20cm D=8mm
 lt=unitconv(cm,model_L,20)
 nBars=ceil((h-2*c)/lt)+1
 # rebar diameter in mm
@@ -96,12 +96,12 @@ $!
 $$2.1
     # design material ID for bars = 2
     # X coord., Y coord., bar area, design material ID, Linit [0,1), Lend (0,1]
-    rpos=if(c+xdim*(i-1)>h,h-c,c+xdim*(i-1))
+    rpos=if(c+xdim*(i-1)>h,h/2-c,-h/2+c+xdim*(i-1))
     # left
-    res=addRebarL(c,rpos,RebArea,2,0,1)
+    res=addRebarL(-b/2+c,rpos,RebArea,2,0,1)
     exitdo=if(res==-1,1,0)
     # right
-    res=addRebarL(b-c,rpos,RebArea,2,0,1)
+    res=addRebarL(b/2-c,rpos,RebArea,2,0,1)
     exitdo=if(res==-1,1,0)
     # shear reinforcements
     # legs in Y, legs in Z, bar area, spacing, design material ID = 2, Linit [0,1), Lend (0,1]
