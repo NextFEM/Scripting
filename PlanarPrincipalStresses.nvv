@@ -1,0 +1,17 @@
+# Principal stresses calculation
+sxx=fxx/t
+syy=fyy/t
+sxy=fxy/t
+s1=(sxx+syy)/2+sqrt(((sxx-syy)/2)^2+sxy^2)
+s2=(sxx+syy)/2-sqrt(((sxx-syy)/2)^2+sxy^2)
+# Counterclockwise angle from local x
+theta=0.5*atan(2*sxy/(sxx-syy))*180/pi
+@_Princ1
+s1
+@_Princ2
+s2
+@_Angle[°]
+theta
+# activate gradient on screen
+@Contour
+1
